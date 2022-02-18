@@ -12,28 +12,19 @@
 ?>
 <script>
     var _ra = _ra || {};
-    _ra.sendProductInfo = <?php echo $this->sendProduct(); ?>;
+    var sendProductInfo = <?php echo $this->sendProduct(); ?>;
     
-    var Product_ID = _ra.sendProductInfo.id;
+    _ra.sendProductInfo = sendProductInfo;
 
     if (_ra.ready !== undefined) {
         _ra.sendProduct(_ra.sendProductInfo);
     }
     
     window.addEventListener("load", function(){
-        if (Product_ID !== undefined) {
-            _ra.addToCartInfo = {
-                "product_id": Product_ID,
-                "quantity": 1,
-                "variation": false
-            };
-            document.querySelector("#qty").addEventListener("change", function() {
-                _ra.addToCartInfo.quantity = this.value;
-            });
-            document.querySelector(ra_params.add_to_cart_button_id)
-                .addEventListener("click", function(){
-                _ra.addToCart(_ra.addToCartInfo.product_id, _ra.addToCartInfo.quantity, _ra.addToCartInfo.variation);
-            });
-        }
+        document.querySelector(ra_params.add_to_cart_button_id).addEventListener("click", function(){
+            if (_ra.ready !== undefined) {
+                _ra.addToCart(sendProductInfo.id, document.querySelector("#qty").value, false);
+            }
+        });
     });
 </script>

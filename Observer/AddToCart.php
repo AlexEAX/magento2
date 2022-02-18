@@ -86,16 +86,16 @@ class AddToCart implements ObserverInterface
         $event = $observer->getEvent()->getName();
 
         switch ($event) {
-            case 'checkout_cart_product_add_after':
+            /*case 'checkout_cart_product_add_after':
                 $action = 'add';
-                break;
+                break;*/
             case 'sales_quote_remove_item':
                 $action = 'remove';
                 break;
         }
-
+/*
         if ($action == 'add') {
-            /** @noinspection PhpUndefinedMethodInspection */
+            /** @noinspection PhpUndefinedMethodInspection * /
             $result[] = sprintf("
                 _ra.addToCartInfo = {
                         'product_id': '%s',
@@ -111,7 +111,8 @@ class AddToCart implements ObserverInterface
                     _ra.addToCartInfo.variation
                     );
                 }";
-        } elseif ($action == 'remove') {
+        } else*/
+        if ($action == 'remove') {
             /** @noinspection PhpUndefinedMethodInspection */
             $result[] = sprintf("
                 _ra.removeFromCartInfo = {
@@ -130,10 +131,10 @@ class AddToCart implements ObserverInterface
         }
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $addToCartData = $this->_catalogSession->getAddToCart();
+        // $addToCartData = $this->_catalogSession->getAddToCart();
         $data = implode("\n", $result);
-        /** @noinspection PhpUndefinedMethodInspection */
-        $this->_catalogSession->setAddToCart($addToCartData . $data);
+        /** @noinspection PhpUndefinedMethodInspection $addToCartData .*/
+        $this->_catalogSession->setAddToCart($data);
         return true;
     }
 }

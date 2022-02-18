@@ -34,13 +34,11 @@ class StockHelper extends AbstractHelper
     public function __construct(
         Context $context,
         StockRegistry $stockProvider,
-        GetSourceItemsBySku $getSourceItemsBySku,
         PriceHelper $_retargetingPriceHelper
     )
     {
         parent::__construct($context);
         $this->stockProvider = $stockProvider;
-        $this->getSourceItemsBySku = $getSourceItemsBySku;
         $this->_retargetingPriceHelper = $_retargetingPriceHelper;
 
     }
@@ -95,11 +93,10 @@ class StockHelper extends AbstractHelper
                 }
                 break;
             default:
-                $qty += $this->getAvailableQuantity($product, $website);
+                $qty += (int) $product->isAvailable();
                 break;
         }
-
-        return (int)$qty;
+        return (int) $qty;
     }
 
     /**
@@ -130,12 +127,7 @@ class StockHelper extends AbstractHelper
         /* @var Product $product */
 
         foreach ($stockItems as $stockItem) {
-
-            $sourceItems = $this->getSourceItemsBySku->execute($stockItem->getSku());
-            foreach ($sourceItems as $sourceItemId => $sourceItem) {
-                $quantities[$sourceItemId] = $sourceItem->getQuantity();
-            }
-
+            $quantities[$stockItem->getId()] = (int) $stockItem->getQty();
         }
 
         return $quantities;
