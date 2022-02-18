@@ -9,9 +9,6 @@
         <observer name="retargeting_tracker_order_success"
                   instance="Retargeting\Tracker\Observer\SetRetargetingTrackerOnOrderSuccessPageViewObserver"/>
     </event>
-    <event name="checkout_cart_product_add_after">
-        <observer name="retargeting_tracker_add_to_cart" instance="Retargeting\Tracker\Observer\AddToCart"/>
-    </event>
     <event name="sales_quote_remove_item">
         <observer name="retargeting_tracker_remove_from_cart" instance="Retargeting\Tracker\Observer\AddToCart"/>
     </event>
