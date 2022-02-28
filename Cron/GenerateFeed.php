@@ -3,33 +3,24 @@
 namespace Retargeting\Tracker\Cron;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Retargeting\Tracker\Controller\Feed\Feed;
-
-use Exception;
 use Laminas\Db\Sql\Ddl\Column\Integer;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Visibility;
-use Magento\Catalog\Ui\DataProvider\Product\ProductCollectionFactory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Response\Http\FileFactory;
-use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\Website;
 use Magento\Tax\Api\TaxCalculationInterface;
-use phpseclib\Math\BigInteger;
 use Retargeting\Tracker\Helper\Data;
 use Retargeting\Tracker\Helper\PriceHelper;
 use Retargeting\Tracker\Helper\StockHelper;
@@ -123,11 +114,15 @@ class GenerateFeed {
 
     private static $ids = [];
     private static $isExec = false;
-    private static $cronActive = false;
 
     public function execute()
     {
-        if (!self::$isExec && self::$cronActive) {
+        $cronActive = (int) $this->getConfig(\Retargeting\Tracker\Helper\Data::RETARGETING_CRON_FEED);
+
+        if (!self::$isExec && $cronActive !== 0) {
+            
+            $defStock = (int) $this->getConfig(\Retargeting\Tracker\Helper\Data::RETARGETING_DEFAULT_STOCK);
+
             $name = date('m_d_Y_H_i_s');
             $filepath = 'retargeting'.$name.'.csv';
             //$this->directory->create('export');
@@ -172,13 +167,17 @@ class GenerateFeed {
                             $productType = $product->getTypeInstance();
                             $bundledItemIds = $productType->getChildrenIds($product->getId(), $required = true);
         
+                            $stock = $this->stockHelper->getQuantity($product, $store);
+                            
+                            $stock = $stock < 0 ? $defStock : $stock;
+
                             /** @noinspection PhpParamsInspection */
                             $stream->writeCsv([
                                 'product id' => $product->getId(),
                                 'product name' => $product->getName(),
                                 'product url' => $product->getProductUrl(false),
                                 'image url' => $product->getMediaConfig()->getMediaUrl($product->getImage()),
-                                'stock' => $this->stockHelper->getQuantity($product, $store),
+                                'stock' => $stock,
                                 'price' => $this->priceHelper->getFullPrice($product),
                                 'sale price' => $this->priceHelper->getProductPrice($product),
                                 'brand' => '',

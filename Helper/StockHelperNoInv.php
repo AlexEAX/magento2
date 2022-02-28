@@ -20,11 +20,10 @@ use Magento\Inventory\Model\SourceItem\Command\GetSourceItemsBySku;
  * Class StockHelper
  * @package Retargeting\Tracker\Helper
  */
-class StockHelper extends AbstractHelper
+class StockHelperNoInv extends AbstractHelper
 {
 
     private $stockProvider;
-    private $getSourceItemsBySku = null;
 
     /**
      * StockHelper constructor.
@@ -35,13 +34,12 @@ class StockHelper extends AbstractHelper
     public function __construct(
         Context $context,
         StockRegistry $stockProvider,
-        // GetSourceItemsBySku $getSourceItemsBySku = null,
         PriceHelper $_retargetingPriceHelper
     )
     {
         parent::__construct($context);
         $this->stockProvider = $stockProvider;
-        // $this->getSourceItemsBySku = $getSourceItemsBySku;
+        $this->getSourceItemsBySku = null;
         $this->_retargetingPriceHelper = $_retargetingPriceHelper;
 
     }
@@ -99,7 +97,6 @@ class StockHelper extends AbstractHelper
                 if ($this->getSourceItemsBySku !== null) {
                     $qty += $this->getAvailableQuantity($product, $website);
                 } else {
-                    $sourceItems = $this->stockProvider->getStockItemBySku($product->getSku());
                     $qty += (int) $product->isAvailable();
                 }
             break;
@@ -200,12 +197,11 @@ class StockHelper extends AbstractHelper
      */
     private function getStockItem(Product $product)
     {
-        $sourceItems = $this->stockProvider->getStockItemBySku($product->getSku());
-        // $sourceItems = $this->getSourceItemsBySku->execute($product->getSku());
+
+        $sourceItems = $this->getSourceItemsBySku->execute($product->getSku());
         $quantities = 0;
         foreach ($sourceItems as $sourceItemId => $sourceItem) {
-            $quantities +=  $sourceItem->getQty();
-            // $quantities += $sourceItem->getQuantity();
+            $quantities += $sourceItem->getQuantity();
         }
 
         return $quantities;

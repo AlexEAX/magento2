@@ -50,6 +50,8 @@ class Data extends AbstractHelper
     const RETARGETING_PRICE_LABEL_ID = 'retargeting/advanced_settings/priceLabelSelector';
     const RETARGETING_SHOPPING_CART_URL = 'retargeting/advanced_settings/shoppingCartUrl';
     const RETARGETING_IMAGE_SELECTOR = 'retargeting/advanced_settings/imageSelector';
+    const RETARGETING_CRON_FEED = 'retargeting/advanced_settings/cronfeed';
+    const RETARGETING_DEFAULT_STOCK = 'retargeting/advanced_settings/defaultStock';
 
     /**
      * ModuleList Interface

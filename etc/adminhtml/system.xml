@@ -76,9 +76,17 @@
                     <label>Main Image Selector</label>
                     <comment><![CDATA[ ... ]]></comment>
                 </field>
+                <field id="cronfeed" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>CronFeed</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="defaultStock" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Default Stock in case of negative value</label>
+                    <source_model>Retargeting\Tracker\Model\defaultStock</source_model>
+                </field>
             </group>
-
-
         </section>
     </system>
 </config>
