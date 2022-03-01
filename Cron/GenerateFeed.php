@@ -3,7 +3,6 @@
 namespace Retargeting\Tracker\Cron;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-
 use Laminas\Db\Sql\Ddl\Column\Integer;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;

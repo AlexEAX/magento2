@@ -12,7 +12,6 @@
 
 namespace Retargeting\Tracker\Controller\Feed;
 
-use Exception;
 use Laminas\Db\Sql\Ddl\Column\Integer;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -170,7 +169,7 @@ class Feed extends Action
 
             $name = date('m_d_Y_H_i_s');
             $filepath = 'retargeting'.$name.'.csv';
-            // $this->directory->create('export');
+            //$this->directory->create('export');
             self::$isExec = true;
 
             $defStock = (int) $this->getConfig(\Retargeting\Tracker\Helper\Data::RETARGETING_DEFAULT_STOCK);
