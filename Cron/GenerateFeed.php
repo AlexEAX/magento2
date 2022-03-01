@@ -115,6 +115,15 @@ class GenerateFeed {
     private static $ids = [];
     private static $isExec = false;
 
+    public function getConfig($configPath, $scope = 'default')
+    {
+        return $this->scopeConfig->getValue(
+            $configPath,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $scope
+        ) ?? 0;
+    }
+    
     public function execute()
     {
         $cronActive = (int) $this->getConfig(\Retargeting\Tracker\Helper\Data::RETARGETING_CRON_FEED);
