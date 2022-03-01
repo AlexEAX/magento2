@@ -87,8 +87,7 @@ class Product extends View
         PriceHelper $_retargetingPriceHelper,
         StockHelper $_retargetingStockHelper,
         array $data = []
-    )
-    {
+        ) {
         parent::__construct(
             $context,
             $urlEncoder,
@@ -156,11 +155,7 @@ class Product extends View
      * @param Store $store
      * @return string
      */
-    protected function prepareUrl(
-        $product,
-        $store
-    )
-    {
+    protected function prepareUrl($product, $store) {
         $options = [
             '_ignore_category' => true,
             '_nosid' => true,
@@ -184,22 +179,22 @@ class Product extends View
         ] : false);
     }
 
+    public function checkQty($qty) {
+        return $qty < 0 ?
+            $this->_retargetingData->getConfig(\Retargeting\Tracker\Helper\Data::RETARGETING_DEFAULT_STOCK) : $qty;
+    }
+
     /**
      * Prepare inventory object
      * @param \Magento\Catalog\Model\Product $product
      * @param Store $store
      * @return array
      */
-    protected function prepareInventory(
-        \Magento\Catalog\Model\Product $product,
-        Store $store
-    )
-    {
-        $qty = $this->_retargetingStockHelper->getQuantity($product, $store);
+    protected function prepareInventory(\Magento\Catalog\Model\Product $product, Store $store) {
 
         return [
             'variations' => false,
-                'stock' => $qty < 0 ? 0 : $qty
+            'stock' => $this->checkQty($this->_retargetingStockHelper->getQuantity($product, $store))
         ];
     }
 

@@ -13,6 +13,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\Website;
+use Magento\Inventory\Model\SourceItem\Command\GetSourceItemsBySku;
 
 /**
  * Class StockHelper

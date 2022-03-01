@@ -135,6 +135,13 @@ class Data extends AbstractHelper
             );
     }
 
+    public function getConfig($configPath, $scope = 'default') {
+        return $this->scopeConfig->getValue(
+            $configPath,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $scope
+        ) ?? 0;
+    }
     /**
      * Return Retargeting Tracker Version
      * @return bool
