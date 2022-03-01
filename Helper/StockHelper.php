@@ -6,7 +6,6 @@ namespace Retargeting\Tracker\Helper;
 use Magento\Bundle\Model\Product\Type as Bundled;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Type as ProductType;
-use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -14,7 +13,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\Website;
-use Magento\Inventory\Model\SourceItem\Command\GetSourceItemsBySku;
 
 /**
  * Class StockHelper
@@ -24,6 +22,7 @@ class StockHelper extends AbstractHelper
 {
 
     private $stockProvider;
+    private $getSourceItemsBySku = null;
 
     /**
      * StockHelper constructor.
@@ -95,8 +94,12 @@ class StockHelper extends AbstractHelper
                 }
                 break;
             default:
-                $qty += $this->getAvailableQuantity($product, $website);
-                break;
+                if ($this->getSourceItemsBySku !== null) {
+                    $qty += $this->getAvailableQuantity($product, $website);
+                } else {
+                    $qty += (int) $product->isAvailable();
+                }
+            break;
         }
 
         return (int)$qty;
@@ -130,12 +133,14 @@ class StockHelper extends AbstractHelper
         /* @var Product $product */
 
         foreach ($stockItems as $stockItem) {
-
-            $sourceItems = $this->getSourceItemsBySku->execute($stockItem->getSku());
-            foreach ($sourceItems as $sourceItemId => $sourceItem) {
-                $quantities[$sourceItemId] = $sourceItem->getQuantity();
+            if ($this->getSourceItemsBySku !== null) {
+                $sourceItems = $this->getSourceItemsBySku->execute($stockItem->getSku());
+                foreach ($sourceItems as $sourceItemId => $sourceItem) {
+                    $quantities[$sourceItemId] = $sourceItem->getQuantity();
+                }
+            } else {
+                $quantities[$stockItem->getId()] = (int) $stockItem->getQty();
             }
-
         }
 
         return $quantities;
@@ -192,11 +197,16 @@ class StockHelper extends AbstractHelper
      */
     private function getStockItem(Product $product)
     {
-
-        $sourceItems = $this->getSourceItemsBySku->execute($product->getSku());
         $quantities = 0;
-        foreach ($sourceItems as $sourceItemId => $sourceItem) {
-            $quantities += $sourceItem->getQuantity();
+
+        if ($this->getSourceItemsBySku !== null) {
+            $sourceItems = $this->getSourceItemsBySku->execute($product->getSku());
+            
+            foreach ($sourceItems as $sourceItemId => $sourceItem) {
+                $quantities += $sourceItem->getQuantity();
+            }
+        } else {
+            $quantities = $product->getQty();
         }
 
         return $quantities;

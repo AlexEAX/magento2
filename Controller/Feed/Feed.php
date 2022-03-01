@@ -19,7 +19,6 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Catalog\Model\Product\Visibility;
-use Magento\Catalog\Ui\DataProvider\Product\ProductCollectionFactory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -37,7 +36,6 @@ use Magento\Framework\View\Result\PageFactory;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\Website;
 use Magento\Tax\Api\TaxCalculationInterface;
-use phpseclib\Math\BigInteger;
 use Retargeting\Tracker\Helper\Data;
 use Retargeting\Tracker\Helper\PriceHelper;
 use Retargeting\Tracker\Helper\StockHelper;
@@ -157,14 +155,25 @@ class Feed extends Action
      * @return ResultInterface|ResponseInterface
      * @throws Exception
      */
+    public function getConfig($configPath, $scope = 'default')
+    {
+        return $this->scopeConfig->getValue(
+            $configPath,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $scope
+        ) ?? 0;
+    }
+
     public function execute()
     {
         if (!self::$isExec) {
 
             $name = date('m_d_Y_H_i_s');
             $filepath = 'retargeting'.$name.'.csv';
-            //$this->directory->create('export');
+            // $this->directory->create('export');
             self::$isExec = true;
+
+            $defStock = (int) $this->getConfig(\Retargeting\Tracker\Helper\Data::RETARGETING_DEFAULT_STOCK);
 
             $stream = $this->directory->openFile($filepath, 'w+');
             $stream->lock();
@@ -205,14 +214,18 @@ class Feed extends Action
                             self::$ids[$product->getId()] = $product->getId();
                             $productType = $product->getTypeInstance();
                             $bundledItemIds = $productType->getChildrenIds($product->getId(), $required = true);
-        
+
+                            $stock = $this->stockHelper->getQuantity($product, $store);
+                            
+                            $stock = $stock < 0 ? $defStock : $stock;
+
                             /** @noinspection PhpParamsInspection */
                             $stream->writeCsv([
                                 'product id' => $product->getId(),
                                 'product name' => $product->getName(),
                                 'product url' => $product->getProductUrl(false),
                                 'image url' => $product->getMediaConfig()->getMediaUrl($product->getImage()),
-                                'stock' => $this->stockHelper->getQuantity($product, $store),
+                                'stock' => $stock,
                                 'price' => $this->priceHelper->getFullPrice($product),
                                 'sale price' => $this->priceHelper->getProductPrice($product),
                                 'brand' => '',

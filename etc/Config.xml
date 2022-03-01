@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <retargeting>
+            <advanced_settings>
+                <cronfeed>0</cronfeed>
+                <defaultStock>0</defaultStock>
+                <addToCart>#product-addtocart-button</addToCart>
+            </advanced_settings>
+        </retargeting>
+    </default>
+</config>
