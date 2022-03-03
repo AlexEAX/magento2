@@ -165,6 +165,11 @@ class Feed extends Action
 
     public function execute()
     {
+        /*
+        ini_set('display_errors', 1);
+        var_dump((int) $this->getConfig(\Retargeting\Tracker\Helper\Data::RETARGETING_CRON_FEED));
+        die();
+        */
         if (!self::$isExec) {
 
             $name = date('m_d_Y_H_i_s');
