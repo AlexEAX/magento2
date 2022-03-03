@@ -171,7 +171,7 @@ class Data extends AbstractHelper
             } catch (NoSuchEntityException $e) {
             }
 
-            if ($category && $category->getLevel() > 1) {
+            if ($category) {
                 $data['id'] = $category->getId();
                 $data['name'] = $category->getName();
                 $data['parent'] = false;
