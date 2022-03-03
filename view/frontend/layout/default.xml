@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="after.body.start">
+            <block
+                    class="Retargeting\Tracker\Block\Tracker"
+                    name="retargeting_tracker"
+                    as="retargeting_tracker"
+                    template="retargeting.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="content.bottom">
+            <block
+                    class="Retargeting\Tracker\Block\Email"
+                    name="retargeting_tracker_set_email"
+                    as="retargeting_tracker_set_email"
+                    template="setEmail.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="content.bottom">
+            <block
+                    class="Retargeting\Tracker\Block\Events"
+                    name="retargeting_tracker_save_order"
+                    as="retargeting_tracker_save_order"
+                    template="saveOrder.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

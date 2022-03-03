@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_onepage_controller_success_action">
+        <observer name="retargeting_tracker_order_success"
+                  instance="Retargeting\Tracker\Observer\SetRetargetingTrackerOnOrderSuccessPageViewObserver"/>
+    </event>
+    <event name="multishipping_checkout_controller_success_action">
+        <observer name="retargeting_tracker_order_success"
+                  instance="Retargeting\Tracker\Observer\SetRetargetingTrackerOnOrderSuccessPageViewObserver"/>
+    </event>
+    <event name="sales_quote_remove_item">
+        <observer name="retargeting_tracker_remove_from_cart" instance="Retargeting\Tracker\Observer\AddToCart"/>
+    </event>
+</config>
