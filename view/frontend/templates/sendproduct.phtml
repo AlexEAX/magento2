@@ -21,7 +21,7 @@
     }
     
     window.addEventListener("load", function(){
-        document.querySelector(ra_params.add_to_cart_button_id).addEventListener("click", function(){
+        document.querySelector('<?php echo empty($addToCartButtonId) ? '#product-addtocart-button' : $addToCartButtonId ?>').addEventListener("click", function(ev){
             if (_ra.ready !== undefined) {
                 _ra.addToCart(sendProductInfo['id'], document.querySelector("#qty").value, false);
             }
